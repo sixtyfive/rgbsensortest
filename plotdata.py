@@ -6,13 +6,7 @@ import sqlite3
 from os import path
 import pathlib
 from datetime import datetime, date, time, timedelta
-
-# TODO: why not working?
-# import matplotlib.dates as mdates
-# hours = mdates.HourLocator()
-# fmt = mdates.DateFormatter('%H')
-# ax.xaxis.set_major_locator(hours) 
-# ax.xaxis.set_major_formatter(fmt)
+import matplotlib.dates as mdates
 
 TCS = "tcs34725"
 APDS = "apds9960"
@@ -62,6 +56,10 @@ for offset in range(n_days):
         ax.set_xlim(datetime.combine(first_day + timedelta(days = offset), time(3, 0, 0)), datetime.combine(first_day + timedelta(days = offset), time(23, 0, 0)))
         ax.set_ylabel('Temperature (K)')
         ax.set_ylim(1500, 10000)
+        hours = mdates.HourLocator()
+        fmt = mdates.DateFormatter('%H')
+        ax.xaxis.set_major_locator(hours) 
+        ax.xaxis.set_major_formatter(fmt)
 
         pathlib.Path("plots").mkdir(exist_ok=True)
         plt.savefig(filename)
