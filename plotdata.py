@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sqlite3
 from os import path
+import pathlib
 from datetime import datetime, date, time, timedelta
 
 # TODO: why not working?
@@ -39,7 +40,7 @@ for offset in range(n_days):
     last_min = datetime.combine(first_day + timedelta(days = offset), time(23, 59, 59))
     date_str = first_min.strftime('%Y-%m-%d')
     date_today_str = date.today().strftime('%Y-%m-%d')
-    filename = "day_%s.png" % date_str
+    filename = "plots/%s.png" % date_str
 
     if not path.isfile(filename) or date_str == date_today_str:
         sql_params = [first_min, last_min]
@@ -62,6 +63,7 @@ for offset in range(n_days):
         ax.set_ylabel('Temperature (K)')
         ax.set_ylim(1500, 10000)
 
+        pathlib.Path("plots").mkdir(exist_ok=True)
         plt.savefig(filename)
 
 sql_connection.close()
