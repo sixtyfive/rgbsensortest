@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import sqlite3
+import sys
 from os import path
 import pathlib
 from datetime import datetime, date, time, timedelta
@@ -38,10 +39,18 @@ for offset in range(n_days):
 
     if not path.isfile(filename) or date_str == date_today_str:
         sql_params = [first_min, last_min]
-        data = pd.read_sql_query("SELECT time, kelvin from %s WHERE time BETWEEN ? AND ?" % TCS, sql_connection, params = sql_params)
 
-        # TODO: works fine but there are holes in the data - why?!
-        # data = data.set_index('time').groupby(pd.Grouper(freq='T')).mean().reset_index()
+        # roughly 1 per second, but with millisecond precision unfortunately
+        data = pd.read_sql_query("SELECT time, kelvin, lux from %s WHERE time BETWEEN ? AND ?" % TCS, sql_connection, params = sql_params)
+        data['lux'] = data['lux'].abs() # sometimes there are negative values there...?
+
+        # https://stackoverflow.com/questions/40085300/how-to-smooth-lines-in-a-figure-in-python
+        # from scipy.interpolate import make_interp_spline, BSpline
+        # data = data.set_index('time').asfreq('1min', method='pad').reset_index()
+        # data = data.set_index('time').resample('S').mean().interpolate().asfreq('30min', method='pad').reset_index()
+        # Sri says: if you want to get rid of the details, maybe try throwing stuff out first, then interpolate with spline or cubic afterwards?
+        # print(data)
+        # sys.exit()
 
         if DEBUG:
             with pd.option_context('display.max_rows', None, 'display.max_columns', None):
@@ -51,11 +60,12 @@ for offset in range(n_days):
 
         fig, ax = plt.subplots(figsize=(12,6))
         plot_title = "Light temperature (K) throughout %s" % date_str
-        data.plot(kind='line', title=plot_title, x='time', y='kelvin', legend=False, ax=ax)
+        data.plot(kind='area', title=plot_title, x='time', y='lux', color='#FFF3D8', ax=ax)
+        data.plot(kind='line', title=plot_title, x='time', y='kelvin', color='#FFB515', ax=ax)
         ax.set_xlabel('Hour')
         ax.set_xlim(datetime.combine(first_day + timedelta(days = offset), time(3, 0, 0)), datetime.combine(first_day + timedelta(days = offset), time(23, 0, 0)))
         ax.set_ylabel('Temperature (K)')
-        ax.set_ylim(1500, 10000)
+        ax.set_ylim(1500, 10500)
         hours = mdates.HourLocator()
         fmt = mdates.DateFormatter('%H')
         ax.xaxis.set_major_locator(hours) 
