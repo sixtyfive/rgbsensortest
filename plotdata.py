@@ -72,6 +72,7 @@ for offset in range(n_days):
         ax.xaxis.set_major_formatter(fmt)
 
         pathlib.Path("plots").mkdir(exist_ok=True)
+        plt.tight_layout()
         plt.savefig(filename)
 
 sql_connection.close()
