@@ -12,5 +12,6 @@ new_plots:
 
 sync:
 	git pull
-	git commit -a -m "Today's light"
+	git add plots/*.png
+	git commit -m "Today's light"
 	git push
