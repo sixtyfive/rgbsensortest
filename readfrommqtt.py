@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os.path
+import sys
 import paho.mqtt.client as mqtt # https://pypi.org/project/paho-mqtt
 import numpy as np
 import colour # https://github.com/colour-science/colour
@@ -55,7 +56,7 @@ if os.path.getsize("rgbsensortest_data.sqlite3") == 0:
 mqtt_client = mqtt.Client(client_id="rgbsensor_reader")
 mqtt_client.on_connect = on_connect
 mqtt_client.on_message = on_message
-mqtt_client.connect("rennsemmel")
+mqtt_client.connect(sys.argv[1])
 
 try:
     print("Getting data from MQTT server and storing in database.")

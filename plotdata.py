@@ -23,7 +23,7 @@ def get_last_date():
     rows = sql.fetchall()
     return rows[0][0].date()
 
-sql_connection = sqlite3.connect("rgbsensortest_data.sqlite3", detect_types=sqlite3.PARSE_DECLTYPES)
+sql_connection = sqlite3.connect(sys.argv[1], detect_types=sqlite3.PARSE_DECLTYPES)
 sql = sql_connection.cursor()
 
 first_day = get_first_date()
