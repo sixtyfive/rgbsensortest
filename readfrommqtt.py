@@ -9,7 +9,7 @@ import sqlite3 # lightweight database, https://sqlite.org
 import datetime
 
 sql_connection = sqlite3.connect("rgbsensortest_data.sqlite3")
-# sql_connection.set_trace_callback(print)
+sql_connection.set_trace_callback(print)
 sql = sql_connection.cursor()
 
 def extract_values(str):
